@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-family: "Klee One", Georgia, serif;
+  color: #2e3a2c;
+  background: #f5f0e1;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    @apply min-h-screen;
+  }
+  body {
+    background-color: #f5f0e1;
+    background-image:
+      radial-gradient(circle at 10% 18%, rgba(244, 168, 184, 0.18), transparent 35%),
+      radial-gradient(circle at 82% 65%, rgba(123, 160, 91, 0.16), transparent 40%),
+      radial-gradient(circle at 50% 110%, rgba(232, 195, 74, 0.14), transparent 45%);
+    background-attachment: fixed;
+  }
+  a {
+    color: #8b6a4a;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  a:hover {
+    color: #4e6a4a;
+  }
+}
+
+@layer components {
+  .kc-frame {
+    @apply rounded-[22px] border-2 border-dashed border-ink/70 bg-cream/95 p-5;
+    box-shadow:
+      0 0 0 3px rgba(212, 196, 160, 0.55),
+      0 0 0 4px rgba(46, 58, 44, 0.7),
+      4px 6px 0 0 rgba(46, 58, 44, 0.18);
+  }
+  .kc-frame-inner {
+    @apply rounded-[14px] border border-dotted border-ink/50 bg-cream/70 p-4;
+  }
+  .kc-tape {
+    @apply inline-block px-2 py-0.5 text-xs uppercase tracking-wider text-ink/80;
+    background: linear-gradient(180deg, rgba(232, 195, 74, 0.95), rgba(232, 195, 74, 0.7));
+    box-shadow: 0 1px 0 rgba(46, 58, 44, 0.18);
+  }
+  .kc-sticker {
+    @apply inline-flex items-center gap-1 rounded-[12px] border-2 border-ink/80 bg-cream px-3 py-1 text-ink shadow-sticker;
+  }
+  .kc-btn {
+    @apply rounded-[10px] border-2 border-ink/80 bg-pink-100 px-4 py-2 font-display text-ink shadow-pop transition-transform;
+  }
+  .kc-btn:hover {
+    @apply -translate-y-[1px];
+  }
+  .kc-btn:active {
+    @apply translate-x-[1px] translate-y-[2px] shadow-none;
+  }
+  .kc-btn:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+  .kc-btn-mint {
+    @apply bg-mint-200;
+  }
+  .kc-btn-sky {
+    @apply bg-sky-200;
+  }
+  .kc-btn-butter {
+    @apply bg-butter-200;
+  }
+  .kc-stat {
+    @apply rounded-md border border-ink/70 bg-cream-50/80 px-3 py-2 font-pixel text-[13px] tracking-tight;
+  }
+  .kc-marquee {
+    @apply overflow-hidden whitespace-nowrap py-1 font-pixel text-[11px] uppercase tracking-widest text-ink/80;
+  }
+}
+
+body.is-scrolling .pause-on-scroll,
+body.is-scrolling .animate-bob,
+body.is-scrolling .animate-wiggle,
+body.is-scrolling .animate-blink,
+body.is-scrolling .animate-breathe {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
