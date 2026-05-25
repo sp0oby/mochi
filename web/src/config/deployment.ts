@@ -1,5 +1,6 @@
 import anvilJson from "./deployments/31337.json";
 import baseSepoliaJson from "./deployments/84532.json";
+import baseJson from "./deployments/8453.json";
 import { type Address } from "viem";
 
 export type Deployment = {
@@ -26,6 +27,7 @@ function valid(d: Deployment | undefined): boolean {
 const registry: Record<number, Deployment> = {
   31337: anvilJson as Deployment,
   84532: baseSepoliaJson as Deployment,
+  8453: baseJson as Deployment,
 };
 
 export function getDeployment(chainId: number | undefined): Deployment | null {

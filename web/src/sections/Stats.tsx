@@ -21,9 +21,9 @@ export function Stats() {
   const poolHasLiquidity = (liquidity ?? 0n) > 0n;
 
   // Auto-deepen progress toward the next trigger. Mirrors the contract constant —
-  // testnet build = 0.05 ETH. Mainnet build = 5 ETH. Bump this together with the
+  // mainnet build = 5 ETH. Testnet build was 0.05 ETH. Bump this together with the
   // contract on any redeploy.
-  const AUTO_DEEPEN_TRIGGER_WEI = 50_000_000_000_000_000n; // 0.05 ETH (testnet)
+  const AUTO_DEEPEN_TRIGGER_WEI = 5_000_000_000_000_000_000n; // 5 ETH
   const triggerEth = Number(AUTO_DEEPEN_TRIGGER_WEI) / 1e18;
   const progressWei =
     cumulativeMintInflow !== undefined && lastAutoDeepenAt !== undefined

@@ -88,15 +88,13 @@ contract MochiHook is BaseHook, IUnlockCallback, Ownable, ReentrancyGuard {
     ///         deepen consumes ~10M MOCHI; as the curve price rises, less MOCHI is needed
     ///         per deepen so the reserve stretches further. When lpReserve is exhausted,
     ///         auto-deepens silently skip until anyone calls fundLpReserve.
-    /// @dev TESTNET BUILD: both constants reduced 100× from production values so the
-    ///      flywheel can be exercised with the small ETH available on Sepolia.
-    ///      Production: TRIGGER = 5 ether, AMOUNT = 0.1 ether (= 2% LP rate).
-    ///      Testnet:    TRIGGER = 0.05 ether, AMOUNT = 0.01 ether (= 20% LP rate).
+    /// @dev Production: TRIGGER = 5 ether, AMOUNT = 0.1 ether (= 2% LP rate).
+    ///      For testnet exercises both were reduced 100× (TRIGGER = 0.05, AMOUNT = 0.01)
+    ///      so the flywheel could be hit with Sepolia-sized ETH; restored here.
     ///      IMPORTANT: the TRIGGER must be ≥ AMOUNT or the deepen check will skip
     ///      silently because the hook won't have enough ETH yet.
-    ///      Restore BOTH before any mainnet deploy.
-    uint256 public constant AUTO_DEEPEN_TRIGGER = 0.05 ether;
-    uint256 public constant AUTO_DEEPEN_AMOUNT = 0.01 ether;
+    uint256 public constant AUTO_DEEPEN_TRIGGER = 5 ether;
+    uint256 public constant AUTO_DEEPEN_AMOUNT = 0.1 ether;
 
     // ============ Garden bonding curve constants ============
 

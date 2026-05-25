@@ -226,8 +226,17 @@ contract DeployMochi is Script {
         j = string.concat(j, '  "fee": 8388608,\n');
         j = string.concat(j, '  "tickSpacing": 60\n');
         j = string.concat(j, "}\n");
-        string memory path = string.concat("./deployments/", vm.toString(block.chainid), ".json");
-        vm.writeFile(path, j);
-        console.log("Wrote deployment to:", path);
+        string memory chainSegment = string.concat(vm.toString(block.chainid), ".json");
+
+        string memory contractsPath = string.concat("./deployments/", chainSegment);
+        vm.writeFile(contractsPath, j);
+        console.log("Wrote deployment to:", contractsPath);
+
+        // Mirror into the frontend registry so a freshly-deployed chain lights up
+        // immediately on the next `yarn dev` / `yarn build` — no manual cp step.
+        // foundry.toml grants fs write access to ../web/src/config/deployments/.
+        string memory frontendPath = string.concat("../web/src/config/deployments/", chainSegment);
+        vm.writeFile(frontendPath, j);
+        console.log("Wrote deployment to:", frontendPath);
     }
 }

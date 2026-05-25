@@ -10,7 +10,10 @@ optimizer = true
 optimizer_runs = 200
 via_ir = true
 evm_version = "cancun"
-fs_permissions = [{ access = "read-write", path = "./" }]
+fs_permissions = [
+  { access = "read-write", path = "./" },
+  { access = "read-write", path = "../web/src/config/deployments/" },
+]
 
 remappings = [
   "forge-std/=lib/forge-std/src/",
