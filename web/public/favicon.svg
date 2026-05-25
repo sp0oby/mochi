@@ -66,19 +66,19 @@
           fill="none" stroke-linecap="round"/>
   </g>
 
-  <!-- watering can — the signature accessory -->
-  <g transform="translate(4 44)">
-    <!-- body -->
-    <rect x="0" y="3" width="11" height="9" rx="1.4"
-          fill="#f4c0cc" stroke="#2e3a2c" stroke-width="1.6"/>
-    <!-- spout -->
-    <path d="M11 5 L 16 3 L 16 7 L 11 8 Z"
+  <!-- watering can — spout faces LEFT, away from the gardener -->
+  <g transform="translate(0 44)">
+    <!-- spout (left) -->
+    <path d="M7 5 L 2 3 L 2 7 L 7 8 Z"
           fill="#f4c0cc" stroke="#2e3a2c" stroke-width="1.4"/>
-    <!-- handle -->
-    <path d="M2 3 Q5 -1 9 3" stroke="#2e3a2c" stroke-width="1.4" fill="none"/>
-    <!-- water drops -->
-    <circle cx="17.5" cy="2" r="0.9" fill="#8aa07d"/>
-    <circle cx="19" cy="5" r="0.7" fill="#8aa07d"/>
+    <!-- body -->
+    <rect x="7" y="3" width="11" height="9" rx="1.4"
+          fill="#f4c0cc" stroke="#2e3a2c" stroke-width="1.6"/>
+    <!-- handle on top -->
+    <path d="M9 3 Q13 -1 16 3" stroke="#2e3a2c" stroke-width="1.4" fill="none"/>
+    <!-- water drops, drifting left + down from the spout tip -->
+    <circle cx="0.5" cy="2" r="0.9" fill="#8aa07d"/>
+    <circle cx="-1" cy="5" r="0.7" fill="#8aa07d"/>
   </g>
 
   <!-- corner sparkles -->

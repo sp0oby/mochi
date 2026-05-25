@@ -166,26 +166,28 @@ export function GardenerChan({
         <circle cx="146" cy="168" r="4.5" fill={skin} stroke={ink} strokeWidth="2" />
       </g>
 
-      {/* watering can — signature accessory */}
-      <g transform="translate(8 150)">
+      {/* watering can — signature accessory. spout points LEFT, away from the
+          gardener, so the can looks like it's being held by the right hand and
+          tipped to pour outward. */}
+      <g transform="translate(2 150)">
+        {/* spout (left side) */}
+        <path d="M20 12 L 0 6 L 0 18 L 20 22 Z" fill={can} stroke={ink} strokeWidth="2.2" />
+        {/* spout rosette */}
+        <circle cx="0" cy="12" r="2" fill={ink} opacity="0.4" />
         {/* body */}
-        <rect x="0" y="6" width="36" height="28" rx="3" fill={can} stroke={ink} strokeWidth="2.4" />
-        {/* spout */}
-        <path d="M36 12 L 56 6 L 56 18 L 36 22 Z" fill={can} stroke={ink} strokeWidth="2.2" />
-        {/* handle */}
+        <rect x="20" y="6" width="36" height="28" rx="3" fill={can} stroke={ink} strokeWidth="2.4" />
+        {/* handle on top of the body */}
         <path
-          d="M6 6 Q18 -4 30 6"
+          d="M26 6 Q38 -4 50 6"
           stroke={ink}
           strokeWidth="2.4"
           fill="none"
           strokeLinecap="round"
         />
-        {/* spout rosette */}
-        <circle cx="56" cy="12" r="2" fill={ink} opacity="0.4" />
-        {/* a few sparkly water drops */}
-        <circle cx="62" cy="4" r="2.2" fill="#8aa07d" />
-        <circle cx="66" cy="11" r="1.6" fill="#8aa07d" />
-        <circle cx="60" cy="17" r="1.4" fill="#8aa07d" />
+        {/* sparkly water drops drifting from the spout tip */}
+        <circle cx="-4" cy="4" r="2.2" fill="#8aa07d" />
+        <circle cx="-8" cy="11" r="1.6" fill="#8aa07d" />
+        <circle cx="-2" cy="17" r="1.4" fill="#8aa07d" />
       </g>
 
       {/* corner sparkles */}
