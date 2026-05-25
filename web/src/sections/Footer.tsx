@@ -48,10 +48,13 @@ export function Footer({
   view = "garden",
   onNavGarden,
   onNavDocs,
+  launched = true,
 }: {
   view?: "garden" | "docs";
   onNavGarden?: () => void;
   onNavDocs?: () => void;
+  /** When false, hide the live hook/mochi addresses and just say "chain: Base". */
+  launched?: boolean;
 } = {}) {
   const { chainId, deployment } = useMochi();
 
@@ -122,8 +125,14 @@ export function Footer({
       </div>
 
       <div className="font-pixel text-[11px] uppercase tracking-widest">
-        ♡ chain: <span className="font-pixel">{getChainName(chainId)}</span> ✦ hook:{" "}
-        {addrLink(deployment?.hook)} ✦ mochi: {addrLink(deployment?.mochi)} ♡
+        {launched ? (
+          <>
+            ♡ chain: <span className="font-pixel">{getChainName(chainId)}</span> ✦ hook:{" "}
+            {addrLink(deployment?.hook)} ✦ mochi: {addrLink(deployment?.mochi)} ♡
+          </>
+        ) : (
+          <>♡ chain: <span className="font-pixel">Base</span> ♡</>
+        )}
       </div>
       <div className="font-body text-[12px]">
         watered by niwa-chan ★ audited by mochi-chan ★ powered by uniswap v4

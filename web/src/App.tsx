@@ -63,7 +63,7 @@ export default function App() {
     return (
       <main className="mx-auto max-w-[1100px] px-4 pt-6">
         {view === "docs" ? <Docs onBack={goGarden} /> : <Splash onDocs={goDocs} />}
-        <Footer view={view} onNavGarden={goGarden} onNavDocs={goDocs} />
+        <Footer view={view} onNavGarden={goGarden} onNavDocs={goDocs} launched={false} />
       </main>
     );
   }
