@@ -4,9 +4,8 @@ import { Marquee, Sticker } from "../components/Primitives";
 import { truncAddr } from "../lib/format";
 import { addressUrl, getChainName } from "../lib/explorers";
 
-/** Edit these once you have the real handles / repo. PRs welcome ♡ */
-const X_URL = "https://x.com/YOUR_HANDLE";
-const GITHUB_URL = "https://github.com/YOUR_HANDLE/mochi";
+const X_URL = "https://x.com/mochigardenbase";
+const GITHUB_URL = "https://github.com/sp0oby/mochi";
 
 function CharmLink({
   href,

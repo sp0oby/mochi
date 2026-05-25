@@ -141,9 +141,9 @@ contract DeployMochi is Script {
         console.log("Deployed swap router:", swapRouterAddr);
 
         // 9. Initial liquidity. Per deployer preference: NO auto-seed on real chains.
-        //    Deployer adds LP manually via the frontend Liquidity panel using the 100M
-        //    MOCHI from deployment + accumulated mint-fee ETH. This gives full control
-        //    over pool depth and timing.
+        //    Deployer adds LP manually via the frontend Liquidity panel using the 25M
+        //    MOCHI from the deployer allocation + accumulated mint-fee ETH. This gives
+        //    full control over pool depth and timing.
         //    Anvil keeps a generous auto-seed because local dev wants something playable
         //    right after deploy. Override with `SEED_ETH=...` env var to force a seed on
         //    any chain.
