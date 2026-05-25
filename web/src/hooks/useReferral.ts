@@ -3,6 +3,7 @@ import { isAddress, type Address, getAddress } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import MochiHookAbi from "../abi/MochiHook.json";
 import { useMochi } from "./useMochi";
+import { SITE_URL } from "../config/site";
 
 const STORAGE_KEY = "mochi.garden.referrer";
 const ZERO_ADDR: Address = "0x0000000000000000000000000000000000000000";
@@ -57,11 +58,13 @@ export function useReferral() {
     ? lockedOnChain
     : localReferrer ?? ZERO_ADDR;
 
-  // Build a share link for the connected user
+  // Build a share link for the connected user. Always anchors to the canonical
+  // site URL so the printed link is e.g. https://mochigarden.xyz/?ref=0x...
+  // even when the user is browsing a vercel preview / localhost / etc.
   const shareLink = useMemo(() => {
     if (!me) return null;
     try {
-      const url = new URL(window.location.href);
+      const url = new URL(SITE_URL);
       url.searchParams.set("ref", me);
       return url.toString();
     } catch {
