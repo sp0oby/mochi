@@ -98,6 +98,59 @@ export function Stat({
   );
 }
 
+/** A single twinkling sparkle. Place inside a relatively-positioned parent and
+ *  set top/left/right/bottom via the style prop. Each sparkle randomizes its
+ *  own duration + delay so the field doesn't pulse in unison. */
+export function Sparkle({
+  glyph = "✦",
+  color = "#d97a8d",
+  size = 12,
+  className = "",
+  style,
+}: {
+  glyph?: string;
+  color?: string;
+  size?: number;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  // Stable-ish randomness per render, deterministic enough that hydration
+  // doesn't whine but varied enough that twinkles don't sync.
+  const dur = 1.6 + Math.random() * 1.8;
+  const delay = Math.random() * 1.5;
+  return (
+    <span
+      aria-hidden
+      className={`kc-sparkle absolute ${className}`}
+      style={{
+        color,
+        fontSize: size,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        ...({ "--kc-twinkle-dur": `${dur.toFixed(2)}s`, "--kc-twinkle-delay": `${delay.toFixed(2)}s` } as React.CSSProperties),
+        ...style,
+      }}
+    >
+      {glyph}
+    </span>
+  );
+}
+
+/** A row of small accessory glyphs — the decora "charm strip" under headings. */
+export function AccessoryRow({ className = "" }: { className?: string }) {
+  return (
+    <div aria-hidden className={`kc-accessory-row ${className}`}>
+      <span style={{ color: "#d97a8d" }}>♡</span>
+      <span style={{ color: "#e8c34a" }}>✦</span>
+      <span style={{ color: "#7ba05b" }}>✿</span>
+      <span style={{ color: "#8aa07d" }}>★</span>
+      <span style={{ color: "#d97a8d" }}>✧</span>
+      <span style={{ color: "#e8c34a" }}>♥</span>
+      <span style={{ color: "#7ba05b" }}>🌱</span>
+      <span style={{ color: "#d97a8d" }}>♡</span>
+    </div>
+  );
+}
+
 /** Footer marquee — kept slow per kawaii-motion. */
 export function Marquee({ children }: { children: ReactNode }) {
   return (

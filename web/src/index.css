@@ -79,6 +79,23 @@
   .kc-marquee {
     @apply overflow-hidden whitespace-nowrap py-1 font-pixel text-[11px] uppercase tracking-widest text-ink/80;
   }
+  .kc-accessory-row {
+    @apply flex flex-wrap items-center gap-2 font-display text-base text-ink/80;
+  }
+  .kc-accessory-row > span {
+    @apply inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-ink/40 bg-cream-50/70 px-1.5 text-[15px] shadow-sticker;
+  }
+  .kc-sparkle {
+    @apply pointer-events-none select-none;
+    animation: kc-twinkle var(--kc-twinkle-dur, 2.4s) ease-in-out infinite;
+    animation-delay: var(--kc-twinkle-delay, 0s);
+  }
+}
+
+@keyframes kc-twinkle {
+  0%, 100% { opacity: 1;   transform: scale(1) rotate(0deg); }
+  35%      { opacity: 0.2; transform: scale(0.65) rotate(14deg); }
+  65%      { opacity: 0.85; transform: scale(0.95) rotate(-8deg); }
 }
 
 body.is-scrolling .pause-on-scroll,
