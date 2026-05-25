@@ -185,7 +185,7 @@ export function Docs({ onBack }: { onBack: () => void }) {
               <Sticker tone="pink" rotate={-2}>swap ETH → MOCHI</Sticker>
               <span className="font-pixel text-[11px] tracking-widest text-ink/55">pool buy</span>
             </div>
-            <Row label="protocol entry fee" value="1% of ETH input → dev treasury" />
+            <Row label="protocol entry fee" value="1% of ETH input → treasury" />
             <Row label="lp fee (dynamic)" value="0.5% – 1.0% → liquidity providers" />
           </InnerFrame>
           <InnerFrame>
@@ -194,7 +194,7 @@ export function Docs({ onBack }: { onBack: () => void }) {
               <span className="font-pixel text-[11px] tracking-widest text-ink/55">pool sell</span>
             </div>
             <Row label="lp fee only" value="0.5% – 1.0% → liquidity providers" />
-            <Row label="no protocol cut" value="dev takes nothing on sells" />
+            <Row label="no protocol cut" value="treasury takes nothing on sells" />
           </InnerFrame>
           <InnerFrame>
             <div className="mb-1 flex flex-wrap items-center gap-2">
@@ -202,7 +202,7 @@ export function Docs({ onBack }: { onBack: () => void }) {
               <span className="font-pixel text-[11px] tracking-widest text-ink/55">game harvest</span>
             </div>
             <Row label="not a pool swap" value="hook transfers MOCHI from treasury" />
-            <Row label="protocol harvest fee" value="1% of MOCHI payout → dev treasury" />
+            <Row label="protocol harvest fee" value="1% of MOCHI payout → treasury" />
           </InnerFrame>
           <InnerFrame>
             <div className="mb-1 flex flex-wrap items-center gap-2">
