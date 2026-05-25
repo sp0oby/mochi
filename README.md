@@ -2,7 +2,7 @@
 
 A kawaii on-chain garden powered by a **Uniswap v4 hook**. Buy MOCHI through the pool → mochi-chan drips SEEDs into your garden → cast SEEDs into gardeners → gardeners produce more SEEDs over time → compound forever, or harvest SEEDs into MOCHI from the hook's treasury.
 
-It's a modern fork of the classic [`sp0oby/ponzi`](https://github.com/sp0oby/ponzi) "eggs/miners" game, rebuilt from scratch so the entire game loop *is* a Uniswap v4 pool. Every swap touches the game; every game action talks to the pool.
+It takes the classic on-chain "eggs/miners" compounding-game pattern and rebuilds it from scratch so the entire game loop *is* a Uniswap v4 pool. Every swap touches the game; every game action talks to the pool.
 
 > **v1 status:** Live on Base Sepolia ([MochiHook](https://sepolia.basescan.org/address/0xef386C13D7B8E3Cc03B598159005Cc1AA83DA5c8) · [MochiToken](https://sepolia.basescan.org/address/0x4051BC1fCC067BdD5F4eb11fAf3E8C8A1DaefEcf)). 51 passing Foundry tests, Slither-audited, single-page frontend with mint/cast/harvest/pool/liquidity/referrals + auto-deepen flywheel.
 > Mainnet deploy: after public QA.
@@ -11,9 +11,9 @@ It's a modern fork of the classic [`sp0oby/ponzi`](https://github.com/sp0oby/pon
 
 ## The pitch
 
-The original Ponzi game was a closed-economy contract: pay ETH for "eggs," hatch eggs into "miners," sell eggs back for ETH. The contract held the ETH; bigger contract balance = bigger sell payout. Pure compounding curve, no real DEX.
+The classic eggs/miners pattern is a closed-economy contract: pay ETH for "eggs," hatch eggs into "miners," sell eggs back for ETH. The contract holds the ETH; bigger contract balance = bigger sell payout. Pure compounding curve, no real DEX.
 
-Mochi Garden keeps that exact compounding loop but lifts the value side onto a real Uniswap v4 pool. Every ETH⇄MOCHI swap goes through the same pool everyone else uses — price is fully market-driven. The *game* sits on the hook and tags along: buying MOCHI passively drips SEEDs into your garden, casting compounds, harvesting pays out from a MOCHI treasury via the original game's bonding-curve math.
+Mochi Garden keeps that exact compounding loop but lifts the value side onto a real Uniswap v4 pool. Every ETH⇄MOCHI swap goes through the same pool everyone else uses — price is fully market-driven. The *game* sits on the hook and tags along: buying MOCHI passively drips SEEDs into your garden, casting compounds, harvesting pays out from a MOCHI treasury via the classic PSN/PSNH bonding-curve math.
 
 Result: you can play the game as a game (cast → compound → sell), or treat it as a normal Uniswap pool (just swap), or both. Active LPs get a fee rebate on their own swaps.
 
@@ -90,7 +90,7 @@ Visual grammar is pure kawaiicore: cream `#fff8e7` base, ink `#3a2c3a` (never pu
 | `GARDEN_INITIAL_INVENTORY`| `700M ether`| **NEW:** MOCHI in the garden curve at deploy            |
 | `BASE_FEE` / `PEAK_FEE`   | `5_000` / `10_000` | Dynamic swap fee floor (0.5%) and ceiling (1%)  |
 | `LP_REBATE_BPS`           | `5_000`    | Active LPs get 50% off the dynamic fee on their swaps    |
-| `PSN` / `PSNH`            | `10_000` / `5_000` | Harvest bonding-curve constants (ported from sp0oby/ponzi) |
+| `PSN` / `PSNH`            | `10_000` / `5_000` | Harvest bonding-curve constants (classic eggs/miners PSN/PSNH curve) |
 
 ### Economics: where every fee goes
 
@@ -112,17 +112,17 @@ There are three distinct fee surfaces. Be careful not to conflate them.
 
 So entering the game (buying MOCHI) pays *both* dev *and* LPs. Exiting via the pool pays *only LPs*. Exiting via the game `sell()` pays *only dev* (treasury-funded, no pool involvement). LPs eat regardless of direction.
 
-The dev-entry fee on buys exists specifically so the deployer can accumulate ETH to bootstrap initial liquidity. It mirrors the original eggs/beans model where the dev took a slice of every ETH-in action.
+The dev-entry fee on buys exists specifically so the deployer can accumulate ETH to bootstrap initial liquidity. It mirrors the classic eggs/miners model where the dev took a slice of every ETH-in action.
 
 ### The bonding curve
 
-The original Ponzi used this for both buys and sells:
+The classic eggs/miners curve uses this for both buys and sells:
 
 ```
 calculateTrade(rt, rs, bs) = (PSN × bs) / (PSNH + ((PSN × rs + PSNH × rt) / rt))
 ```
 
-In Mochi Garden, `calculateSeedSell(seeds)` calls it as `calculateTrade(seeds, marketSeeds, mochiTreasury)`. Bigger treasury → better MOCHI payout per SEED. Bigger marketSeeds → smaller payout (everyone's farming, scarcity drops). It's the same dynamic that drove the original loop, just denominated in MOCHI instead of ETH.
+In Mochi Garden, `calculateSeedSell(seeds)` calls it as `calculateTrade(seeds, marketSeeds, mochiTreasury)`. Bigger treasury → better MOCHI payout per SEED. Bigger marketSeeds → smaller payout (everyone's farming, scarcity drops). Same dynamic as the classic eggs/miners loop, denominated in MOCHI instead of ETH.
 
 ### Dynamic fee
 
@@ -143,7 +143,7 @@ When someone adds liquidity through the pool, the hook's `afterAddLiquidity` rec
 
 ### Referrals
 
-`cast(address referrer)` pays the referrer 12% of the consumed SEEDs as a one-time SEED bonus on the first cast. Self-referral and `address(0)` are ignored. No ongoing cut; it's the simplest version of the original mechanic.
+`cast(address referrer)` pays the referrer 12% of the consumed SEEDs as a one-time SEED bonus on the first cast. Self-referral and `address(0)` are ignored. No ongoing cut; it's the simplest version of the eggs/miners referral mechanic.
 
 ### What hook permissions are enabled
 
@@ -480,7 +480,6 @@ forge test -vv
 
 ## Resources
 
-- Original game: <https://github.com/sp0oby/ponzi>
 - Uniswap v4 core: <https://github.com/Uniswap/v4-core>
 - v4-hooks-public (where `BaseHook` lives): <https://github.com/Uniswap/v4-hooks-public>
 - Frontend skill bundle (local): `/Users/brandonmccall/Desktop/here/{kawaiicore-design,kawaii-motion,dark-chibi}/SKILL.md`
