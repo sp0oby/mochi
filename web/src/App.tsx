@@ -7,9 +7,11 @@ import { Liquidity } from "./sections/Liquidity";
 import { Stats } from "./sections/Stats";
 import { Footer } from "./sections/Footer";
 import { Docs } from "./sections/Docs";
+import { Splash } from "./sections/Splash";
 import { useMochi } from "./hooks/useMochi";
 import { Sticker } from "./components/Primitives";
 import { PriceMismatchBanner } from "./components/PriceMismatchBanner";
+import { isLaunched } from "./config/launch";
 
 function NetworkBanner() {
   const { chainId, deployment } = useMochi();
@@ -31,6 +33,7 @@ function readViewFromHash(): View {
 
 export default function App() {
   const [view, setView] = useState<View>(readViewFromHash);
+  const [launched] = useState<boolean>(isLaunched);
 
   useEffect(() => {
     function onHashChange() {
@@ -51,6 +54,19 @@ export default function App() {
 
   const goDocs = useCallback(() => setView("docs"), []);
   const goGarden = useCallback(() => setView("garden"), []);
+
+  // Pre-launch: splash replaces the garden view. Docs page stays accessible
+  // via #docs so all the mechanics content is still shareable. NetworkBanner +
+  // PriceMismatchBanner are hidden because they'd never apply when the user
+  // can't connect / swap anyway.
+  if (!launched) {
+    return (
+      <main className="mx-auto max-w-[1100px] px-4 pt-6">
+        {view === "docs" ? <Docs onBack={goGarden} /> : <Splash onDocs={goDocs} />}
+        <Footer view={view} onNavGarden={goGarden} onNavDocs={goDocs} />
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto max-w-[1100px] px-4 pt-6">
