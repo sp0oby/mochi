@@ -1,5 +1,5 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { MochiChan } from "../components/mochi/MochiChan";
+import { GardenerChan } from "../components/mochi/GardenerChan";
 import { AccessoryRow, Sparkle, Sticker, Tape } from "../components/Primitives";
 import { truncAddr } from "../lib/format";
 
@@ -34,7 +34,7 @@ export function Hero() {
         </ConnectButton.Custom>
       </header>
 
-      <section className="relative grid grid-cols-1 items-center gap-6 px-2 pb-6 pt-4 md:grid-cols-[minmax(0,1fr)_280px]">
+      <section className="relative grid grid-cols-1 items-center gap-6 px-2 pb-6 pt-4 md:grid-cols-[minmax(0,1fr)_300px]">
         {/* sparkle field — purely decorative, sits behind the content */}
         <Sparkle glyph="✦" color="#d97a8d" size={16} style={{ top: 6, left: 10 }} />
         <Sparkle glyph="✧" color="#e8c34a" size={12} style={{ top: 22, left: 180 }} />
@@ -45,17 +45,13 @@ export function Hero() {
         <Sparkle glyph="✦" color="#d97a8d" size={11} style={{ bottom: 6, right: 120 }} />
 
         <div className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <Sticker tone="pink" rotate={-3}>♡ HELLO ♡</Sticker>
-            <Tape rotate={4}>welcome!!</Tape>
-          </div>
           <h1 className="font-display text-[40px] leading-[1.05] text-ink md:text-[56px]">
             welcome to mochi garden ♡
           </h1>
           <AccessoryRow className="pt-1" />
           <p className="max-w-[560px] font-body text-[15px] text-ink/85">
             a uniswap v4 hook game. buy mochi → grow gardeners → harvest seeds → cast more
-            gardeners. tiny mochi-chan tends the plots while u sleep 🌱 (◕‿◕✿)
+            gardeners. niwa-chan tends the plots while u sleep 🌱 (◕‿◕✿)
           </p>
           <div className="flex flex-wrap items-center gap-2">
             <Sticker tone="pink" rotate={3}>$MOCHI</Sticker>
@@ -70,7 +66,7 @@ export function Hero() {
           <Sparkle glyph="★" color="#7ba05b" size={11} style={{ bottom: 30, left: 4 }} />
           <Sparkle glyph="♡" color="#d97a8d" size={13} style={{ bottom: 4, right: 30 }} />
           <div className="relative animate-bob" style={{ animationDelay: "200ms" }}>
-            <MochiChan size={260} mood="happy" />
+            <GardenerChan size={280} mood="happy" />
           </div>
         </div>
       </section>

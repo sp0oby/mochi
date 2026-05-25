@@ -39,13 +39,22 @@ export function Mint() {
   const { mint, state, error, hash, reset } = useMint();
 
   const busy = state === "submitting" || state === "confirming";
-  const canSubmit = isConnected && !busy && previewEth !== undefined;
 
   // Format curve % consumed
   const pctConsumed =
     initialInventory && supplyMinted !== undefined && initialInventory > 0n
       ? Number((supplyMinted * 10_000n) / initialInventory) / 100
       : 0;
+
+  // Graduation: the contract will revert with GardenInventoryEmpty() once drained.
+  // Gate the button so users don't waste gas on a guaranteed-failed tx.
+  // `undefined` (still loading) does NOT count as graduated — only an explicit 0.
+  const isGraduated = inventoryRemaining !== undefined && inventoryRemaining === 0n;
+  // Last-mile: ≥99% consumed but not yet graduated. Contract caps + refunds the
+  // overspend, but a heads-up keeps users from being surprised.
+  const isLastMile = !isGraduated && pctConsumed >= 99;
+
+  const canSubmit = isConnected && !busy && previewEth !== undefined && !isGraduated;
 
   void currentPrice; // used implicitly through previewMint output; reserved for future spot display
 
@@ -73,17 +82,41 @@ export function Mint() {
       </span>
       <div className="mb-3 flex items-center justify-between">
         <h2 className="font-display text-xl">mint from the garden ♡</h2>
-        <Sticker tone="mint" rotate={3}>
-          🌱 {pctConsumed < 1 ? "early bird" : pctConsumed < 25 ? "growing" : pctConsumed < 75 ? "mid-curve" : "almost minted out"}
-        </Sticker>
+        {isGraduated ? (
+          <Sticker tone="pink" rotate={3}>✿ GRADUATED ✿</Sticker>
+        ) : (
+          <Sticker tone="mint" rotate={3}>
+            🌱 {pctConsumed < 1 ? "early bird" : pctConsumed < 25 ? "growing" : pctConsumed < 75 ? "mid-curve" : pctConsumed < 99 ? "almost minted out" : "last-mile"}
+          </Sticker>
+        )}
       </div>
 
       <InnerFrame>
-        <p className="mb-3 font-body text-sm text-ink/80">
-          pay ETH, get fresh MOCHI. <span className="text-pink-500">the curve scales
-          with demand</span> — price moves up gradually as more mochi sprouts ✿ also
-          drips SEEDs into your wallet ~
-        </p>
+        {isGraduated ? (
+          <div className="mb-3 rounded-md border-2 border-dashed border-pink-500 bg-pink-50/80 p-3 text-center">
+            <div className="font-display text-lg text-ink">
+              the garden minted out ♡
+            </div>
+            <p className="mt-1 font-body text-[13px] text-ink/80">
+              every MOCHI on the curve has been sprouted. swap on the pool to get more
+              ✿ (◕‿◕✿)
+            </p>
+          </div>
+        ) : (
+          <p className="mb-3 font-body text-sm text-ink/80">
+            pay ETH, get fresh MOCHI. <span className="text-pink-500">the curve scales
+            with demand</span> — price moves up gradually as more mochi sprouts ✿ also
+            drips SEEDs into your wallet ~
+          </p>
+        )}
+
+        {isLastMile ? (
+          <div className="mb-3 rounded-md border border-dashed border-butter-300 bg-butter-100/60 p-2 text-[12px] text-ink/80">
+            ⚠ last-mile: less than 1% of the curve left. the contract caps your mint to
+            whatever inventory remains and refunds the unused ETH, so don&apos;t panic
+            if you get less MOCHI than the preview ♡
+          </div>
+        ) : null}
 
         <label className="mb-1 block text-[10px] uppercase tracking-wider text-ink/55">
           ETH to spend
@@ -126,7 +159,9 @@ export function Mint() {
           disabled={!canSubmit}
           onClick={onMint}
         >
-          {state === "submitting"
+          {isGraduated
+            ? "minted out ♡ swap on the pool instead"
+            : state === "submitting"
             ? "minting in your wallet …"
             : state === "confirming"
             ? "confirming …"

@@ -326,7 +326,9 @@ Manual review + Slither pass + 48-test suite. One HIGH finding (reentrancy-eth i
 | **Owner: `withdrawDevEth(X, recipient)`** | X from hook ETH → recipient. | none |
 | **Owner: `fundTreasury(X)`** | none | X MOCHI from caller → treasury. |
 
-**The flywheel in one paragraph:** users pay ETH to mint MOCHI from the curve. 1% of that ETH goes immediately to the dev. The other 99% accumulates in the hook contract. Every 5 ETH of accumulated mint inflow triggers an automatic `deepenPool(1 ETH)` — that 1 ETH plus matching MOCHI from `lpReserve` get LP'd into the v4 pool, where the hook owns the position. As mints proceed, the pool naturally gets deeper without anyone clicking anything. When the dev (or anyone) wants to manually deepen more, they call `deepenPool` directly. When the dev wants to take out the remaining ETH for ops, they call `withdrawDevEth`. No bottleneck on the dev for the flywheel.
+**The flywheel in one paragraph:** users pay ETH to mint MOCHI from the curve. 1% of that ETH goes immediately to the dev. The other 99% accumulates in the hook contract. Every 5 ETH of accumulated mint inflow triggers an automatic `deepenPool(0.1 ETH)` — that 0.1 ETH plus matching MOCHI from `lpReserve` get LP'd into the v4 pool, where the hook owns the position. As mints proceed, the pool naturally gets deeper without anyone clicking anything. When the dev (or anyone) wants to manually deepen more, they call `deepenPool` directly. When the dev wants to take out the remaining ETH for ops, they call `withdrawDevEth`. No bottleneck on the dev for the flywheel.
+
+**Curve graduation:** when `gardenSupplyMinted` reaches `GARDEN_INITIAL_INVENTORY` (700M MOCHI, after ~252 ETH of cumulative mints), `mintFromGarden()` reverts with `GardenInventoryEmpty()` and the frontend mint panel switches to a "minted out ♡ swap on the pool instead" state. From that point on, primary issuance is closed — all MOCHI changes hands through the v4 pool. `deepenPool`, `refillTreasury`, harvests, casting, and pool swaps all keep working unchanged.
 
 ---
 

@@ -127,9 +127,9 @@ export function Footer({
         {addrLink(deployment?.hook)} ✦ mochi: {addrLink(deployment?.mochi)} ♡
       </div>
       <div className="font-body text-[12px]">
-        built with care ★ tested on anvil first ★ best viewed in firefox lol
+        watered by niwa-chan ★ audited by mochi-chan ★ powered by uniswap v4
         <br />
-        (づ｡◕‿‿◕｡)づ
+        (づ｡◕‿‿◕｡)づ have a sweet one ✿
       </div>
     </footer>
   );
