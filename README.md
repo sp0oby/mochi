@@ -4,8 +4,7 @@ A kawaii on-chain garden powered by a **Uniswap v4 hook**. Buy MOCHI through the
 
 It takes the classic on-chain "eggs/miners" compounding-game pattern and rebuilds it from scratch so the entire game loop *is* a Uniswap v4 pool. Every swap touches the game; every game action talks to the pool.
 
-> **v1 status:** Live on Base Sepolia ([MochiHook](https://sepolia.basescan.org/address/0xef386C13D7B8E3Cc03B598159005Cc1AA83DA5c8) · [MochiToken](https://sepolia.basescan.org/address/0x4051BC1fCC067BdD5F4eb11fAf3E8C8A1DaefEcf)). 51 passing Foundry tests, Slither-audited, single-page frontend with mint/cast/harvest/pool/liquidity/referrals + auto-deepen flywheel.
-> Mainnet deploy: after public QA.
+> **v1 status:** Pre-launch. Site lives at [mochigarden.xyz](https://mochigarden.xyz/) in splash / coming-soon mode; contracts deployment-ready for Base mainnet (chain `8453`). 52 unit + 7 invariant Foundry tests passing, Slither-audited, auto-deepen flywheel + curve-graduation gate wired up. Frontend: mint / cast / harvest / pool / liquidity / referrals + a `/docs` page explaining all of it.
 
 ---
 
@@ -19,11 +18,13 @@ Result: you can play the game as a game (cast → compound → sell), or treat i
 
 ---
 
-## Theme & mascot
+## Theme & mascots
 
-**Mochi-chan**: a round mochi with one too-big leaf and a straw sun hat. She tends the garden while you're gone. Her leaf shifts hue with the game's compounding rate (vibrant green = SEEDs piling up fast, pale = stale). Three styles per the kawaiicore mascot rule — sprite (in-game), sticker (marketing), doodle (about page).
+**Niwa-chan** (現役): the chibi gardener with a watering can + straw sun hat + a sakura band on the brim. Lead mascot, lives in the hero, on the favicon, and on every social asset. Niwa = 庭 = garden.
 
-Visual grammar is pure kawaiicore: cream `#fff8e7` base, ink `#3a2c3a` (never pure black), Yusei Magic display + Klee One body + Pixelify Sans labels, nested-border frames, sticker tape at prime-degree rotations. See `/Users/brandonmccall/Desktop/here/kawaiicore-design/SKILL.md` for the full ruleset.
+**Mochi-chan**: the original round-mochi mascot with one too-big leaf and a straw hat. Still ships in the codebase as a secondary character (banner cameos, brand-package continuity). Her leaf shifts hue with the game's compounding rate (vibrant green = SEEDs piling up fast, pale = stale).
+
+Visual grammar: cream `#f5f0e1` base, ink `#2e3a2c` (never pure black), Yusei Magic display + Klee One body + Pixelify Sans labels, nested-border frames, sticker tape at prime-degree rotations, sakura-pink bubble-letter outline on the wordmark. Decora-leaning fairy-kei register.
 
 ---
 
@@ -166,22 +167,24 @@ ponzi/
 ├─ contracts/                Foundry workspace
 │   ├─ src/
 │   │   ├─ MochiToken.sol    ERC20 + Permit, owner-set minter
-│   │   └─ MochiHook.sol     BaseHook — game state + dynamic fee + drip
-│   ├─ test/
-│   │   └─ MochiHook.t.sol   16 tests: unit, fuzz, swap-drip, cast/sell
+│   │   └─ MochiHook.sol     BaseHook — game state + dynamic fee + drip + curve
+│   ├─ test/                 52 unit + 7 invariant tests + 1 fork test
 │   ├─ script/
-│   │   └─ DeployMochi.s.sol Mine hook salt, deploy via CREATE2, seed liquidity
-│   ├─ deployments/<chainId>.json   Written by deploy script
-│   └─ foundry.toml          solc 0.8.26, cancun, evm, OZ v5 + v4-core
+│   │   └─ DeployMochi.s.sol Mine hook salt, deploy via CREATE2, mirror JSON
+│   ├─ deployments/<chainId>.json   Written by deploy script, mirrored to web/
+│   └─ foundry.toml          solc 0.8.26, cancun, via_ir, OZ v5 + v4-core
 │
 ├─ web/                      Vite + React + TypeScript
+│   ├─ public/               favicon, og.png, gardener.gif, twitter-banner.png, pfp.png
 │   ├─ src/
-│   │   ├─ config/           wagmi + chains + deployment registry
+│   │   ├─ config/           wagmi, chains, deployment registry, launch flag
 │   │   ├─ abi/              forge inspect <C> abi --json
-│   │   ├─ hooks/            useMochi, usePoolStats, useUserGameState, useActions
-│   │   ├─ components/       Frame, Tape, Sticker, Stat, Marquee, MochiChan
-│   │   ├─ sections/         Hero, Garden, Pool, Stats, Footer
-│   │   └─ App.tsx           single page (no routes)
+│   │   ├─ hooks/            useMochi, usePoolStats, useUserGameState, useMint, …
+│   │   ├─ components/       Frame, Tape, Sticker, Sparkle, AccessoryRow,
+│   │   │                    Marquee, MochiChan, GardenerChan, TxLink, …
+│   │   ├─ sections/         Hero, Mint, Pool, Garden, Liquidity, Stats,
+│   │   │                    Docs, Splash, Footer
+│   │   └─ App.tsx           hash-routed views (garden / #docs) + splash gate
 │   └─ tailwind.config.js    kawaiicore palette + animations
 │
 └─ README.md
@@ -194,14 +197,13 @@ The hook does **not** mint or hold ETH for liquidity. Every wei in the pool was 
 | Environment    | Seed ETH source                                                                                  |
 |----------------|--------------------------------------------------------------------------------------------------|
 | Anvil          | Deployer (Anvil account 0, pre-funded with 10000 ETH). Script seeds 1000 ETH + matching MOCHI.   |
-| Base Sepolia   | Deployer's faucet ETH. We'll seed a small amount (e.g. 0.05 ETH + matching MOCHI) — enough to test swaps. |
-| Base mainnet   | Whoever bootstraps the pool puts in their own ETH and becomes the initial LP — they earn the LP fee + the LP rebate + bear IL. |
+| Base mainnet   | Deployer adds LP manually via the frontend Liquidity panel after a few organic mints have happened. No auto-seed on real chains by design — keeps the deployer in full control of pool depth + timing. |
 
-The `DEV_ENTRY_FEE_BPS` (1% of every ETH buy) is specifically designed so the deployer can **accumulate ETH from gameplay to top up their LP position** over time. Bootstrap with a small seed, let the dev-entry fee compound, deepen liquidity gradually.
+The 1% mint fee (`DEV_MINT_FEE_BPS`) and the 1% pool-buy fee (`DEV_ENTRY_FEE_BPS`) are sized so the protocol treasury can **accumulate ETH from organic gameplay and use it to bootstrap deeper LP** over time, rather than the deployer fronting it all upfront.
 
 ### Why a fresh PoolManager on Anvil
 
-On real chains the v4 PoolManager is already deployed (Base mainnet: `0x498581ff…b2b`). On Anvil there is no v4 deployment, so the deploy script spins up its own PoolManager + test routers (PoolSwapTest, PoolModifyLiquidityTest) + seeds 1000 ETH of liquidity in a `±600` tick range. When we deploy to Base Sepolia we'll point at the existing PoolManager and add liquidity through PositionManager + Permit2 instead of the test router.
+On Base mainnet the v4 PoolManager is already deployed at `0x498581fF718922c3f8e6A244956aF099B2652b2b` — the deploy script reads `POOL_MANAGER` from env and uses it. On Anvil there is no v4 deployment, so the deploy script spins up its own PoolManager + test routers (`PoolSwapTest`, `PoolModifyLiquidityTest`) + seeds 1000 ETH of liquidity in a `±600` tick range so the local stack is playable immediately.
 
 ### Why state lives in the hook (not a separate contract)
 
@@ -259,9 +261,9 @@ Open <http://localhost:5173>.
 
 ---
 
-## Security review (v2)
+## Security review
 
-Manual review + Slither pass + 48-test suite. One HIGH finding (reentrancy-eth in `mintFromGarden`'s refund path) was resolved by reordering CEI; remaining MEDIUM findings are intentional (div-before-multiply in unit-conversion, `== 0` zero-guards, deliberate `unused-return` on `settle`/`take`/`unlock`).
+Manual review + Slither pass + 52 unit + 7 invariant tests. One HIGH finding (reentrancy-eth in `mintFromGarden`'s refund path) was resolved by reordering CEI; remaining MEDIUM findings are intentional (div-before-multiply in unit-conversion, `== 0` zero-guards, deliberate `unused-return` on `settle`/`take`/`unlock`).
 
 | Concern                              | Mitigation                                                       |
 |--------------------------------------|------------------------------------------------------------------|
@@ -287,15 +289,17 @@ Manual review + Slither pass + 48-test suite. One HIGH finding (reentrancy-eth i
 - Hook callbacks resolve the user from `hookData` first (32-byte address) and fall back to `tx.origin` if empty. The fallback works for EOAs through any router. **AA wallets / smart-contract callers must use a router that passes their address in `hookData`** (our frontend does this automatically; external aggregators like Universal Router will fall back to `tx.origin` which gives the sponsor address for AA, not the user — those users won't be credited for SEED drips / LP rebate).
 - No emergency pause. By design — promotes "fair game" trust. If a critical issue emerges, redeployment is the only fix.
 
-## Live deployment (Base Sepolia)
+## Live deployment
 
 | Contract | Address |
 |---|---|
-| **MochiHook** | [`0xDAdD86A83ee89B549E45E082B39C6045753DA5C8`](https://sepolia.basescan.org/address/0xDAdD86A83ee89B549E45E082B39C6045753DA5C8) ✓ verified |
-| **MochiToken** | [`0x41FB2095BE399e5E2e426BC1Edc9AEa57AAa97EC`](https://sepolia.basescan.org/address/0x41FB2095BE399e5E2e426BC1Edc9AEa57AAa97EC) ✓ verified |
-| Liquidity router | `0xa279F67030347149E9e8781042b0eDf998D34262` |
-| Swap router | `0xA2B1d2aB6fC59952b8A351ea18A54eA9226e5447` |
-| v4 PoolManager (existing) | `0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408` |
+| **MochiHook** | _coming soon to Base mainnet_ |
+| **MochiToken** | _coming soon to Base mainnet_ |
+| Liquidity router | _coming soon to Base mainnet_ |
+| Swap router | _coming soon to Base mainnet_ |
+| v4 PoolManager (existing) | `0x498581fF718922c3f8e6A244956aF099B2652b2b` |
+
+Real addresses land in `contracts/deployments/8453.json` post-deploy; the frontend registry picks them up automatically from there via a symlinked path.
 
 ---
 
@@ -334,28 +338,29 @@ Manual review + Slither pass + 48-test suite. One HIGH finding (reentrancy-eth i
 
 ## Admin operations (deployer runbook)
 
-All commands below run from `contracts/`, assume `.env` is sourced (so `$PRIVATE_KEY` and `$BASE_SEPOLIA_RPC_URL` resolve).
+All commands below run from `contracts/`, assume `.env` is sourced (so `$PRIVATE_KEY` and `$BASE_RPC_URL` resolve).
 
 ```bash
 cd contracts
 set -a; source .env; set +a
 
-# Quick reference vars
-HOOK=0xDAdD86A83ee89B549E45E082B39C6045753DA5C8
-MOCHI=0x41FB2095BE399e5E2e426BC1Edc9AEa57AAa97EC
-DEV=0x6d606cc634F20f5534fba072757F2c2C7B835Bb9
+# Quick reference vars (fill these in after the mainnet deploy lands in
+# contracts/deployments/8453.json — you can also `jq` them out of that file)
+HOOK=0x...
+MOCHI=0x...
+DEV=0x...
 ```
 
 ### Check what the hook holds
 
 ```bash
-echo "Hook ETH:            $(cast balance $HOOK --rpc-url $BASE_SEPOLIA_RPC_URL) wei"
-echo "Treasury MOCHI:      $(cast call $HOOK 'mochiTreasury()(uint256)' --rpc-url $BASE_SEPOLIA_RPC_URL)"
-echo "Garden inv left:     $(cast call $HOOK 'gardenInventoryRemaining()(uint256)' --rpc-url $BASE_SEPOLIA_RPC_URL)"
-echo "lpReserve MOCHI:     $(cast call $HOOK 'lpReserve()(uint256)' --rpc-url $BASE_SEPOLIA_RPC_URL)"
-echo "Cumulative inflow:   $(cast call $HOOK 'cumulativeMintInflow()(uint256)' --rpc-url $BASE_SEPOLIA_RPC_URL)"
-echo "Last auto-deepen at: $(cast call $HOOK 'lastAutoDeepenAt()(uint256)' --rpc-url $BASE_SEPOLIA_RPC_URL)"
-echo "Total dev ETH (pool):$(cast call $HOOK 'totalDevEthAccrued()(uint256)' --rpc-url $BASE_SEPOLIA_RPC_URL)"
+echo "Hook ETH:            $(cast balance $HOOK --rpc-url $BASE_RPC_URL) wei"
+echo "Treasury MOCHI:      $(cast call $HOOK 'mochiTreasury()(uint256)' --rpc-url $BASE_RPC_URL)"
+echo "Garden inv left:     $(cast call $HOOK 'gardenInventoryRemaining()(uint256)' --rpc-url $BASE_RPC_URL)"
+echo "lpReserve MOCHI:     $(cast call $HOOK 'lpReserve()(uint256)' --rpc-url $BASE_RPC_URL)"
+echo "Cumulative inflow:   $(cast call $HOOK 'cumulativeMintInflow()(uint256)' --rpc-url $BASE_RPC_URL)"
+echo "Last auto-deepen at: $(cast call $HOOK 'lastAutoDeepenAt()(uint256)' --rpc-url $BASE_RPC_URL)"
+echo "Total dev ETH (pool):$(cast call $HOOK 'totalDevEthAccrued()(uint256)' --rpc-url $BASE_RPC_URL)"
 ```
 
 ### Pull accumulated hook ETH to your wallet
@@ -365,7 +370,7 @@ Owner-only. Use whenever you want the mint-fee ETH for ops, team, etc.
 ```bash
 # Withdraw 0.005 ETH (5e15 wei) to deployer
 cast send $HOOK "withdrawDevEth(uint256,address)" 5000000000000000 $DEV \
-  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
+  --private-key $PRIVATE_KEY --rpc-url $BASE_RPC_URL
 ```
 
 ### Deepen the v4 pool from hook reserves (permissionless)
@@ -375,7 +380,7 @@ Hook ETH + MOCHI from `lpReserve` → LP'd into the pool. Hook owns the position
 ```bash
 # Deepen with 0.001 ETH (1e15 wei)
 cast send $HOOK "deepenPool(uint256)" 1000000000000000 \
-  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
+  --private-key $PRIVATE_KEY --rpc-url $BASE_RPC_URL
 ```
 
 Caps: max 5 ETH per call, must have hook ETH + lpReserve > 0. **`deepenPool` keeps working even after the curve is fully minted**, since it draws MOCHI from `lpReserve` (not garden inventory). The auto-deepen also keeps firing whenever new mint inflow accumulates.
@@ -387,11 +392,11 @@ If `lpReserve` runs low, anyone can add MOCHI to it. Use this if you have spare 
 ```bash
 # Approve hook to pull 1M MOCHI
 cast send $MOCHI "approve(address,uint256)" $HOOK 1000000000000000000000000 \
-  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
+  --private-key $PRIVATE_KEY --rpc-url $BASE_RPC_URL
 
 # Fund the reserve
 cast send $HOOK "fundLpReserve(uint256)" 1000000000000000000000000 \
-  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
+  --private-key $PRIVATE_KEY --rpc-url $BASE_RPC_URL
 ```
 
 One-way deposit. MOCHI in `lpReserve` can only leave by becoming pool LP.
@@ -403,7 +408,7 @@ Pays ETH from the caller's wallet, hook swaps it for MOCHI on the pool, deposits
 ```bash
 # Refill with 0.001 ETH
 cast send $HOOK "refillTreasury()" --value 1000000000000000 \
-  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
+  --private-key $PRIVATE_KEY --rpc-url $BASE_RPC_URL
 ```
 
 Cap: max 5 ETH per call.
@@ -413,11 +418,11 @@ Cap: max 5 ETH per call.
 ```bash
 # Approve hook to pull MOCHI
 cast send $MOCHI "approve(address,uint256)" $HOOK 1000000000000000000000 \
-  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
+  --private-key $PRIVATE_KEY --rpc-url $BASE_RPC_URL
 
 # fundTreasury (owner-only)
 cast send $HOOK "fundTreasury(uint256)" 1000000000000000000000 \
-  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
+  --private-key $PRIVATE_KEY --rpc-url $BASE_RPC_URL
 ```
 
 ### LP via the frontend (your wallet's ETH + MOCHI)
@@ -428,7 +433,7 @@ Easier than the cast commands. Connect deployer wallet at <http://localhost:5173
 
 ```bash
 cast send $HOOK "setDevTreasury(address)" 0xNEW_DEV \
-  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
+  --private-key $PRIVATE_KEY --rpc-url $BASE_RPC_URL
 ```
 
 Owner-only. Past accrued ETH stays in your old wallet — only future mint fees route to the new address.
@@ -456,15 +461,18 @@ cd contracts
 forge test -vv
 ```
 
-51 passing tests (50 deterministic + 1 fuzz with 1000 runs):
+52 unit tests + 7 invariant tests + 1 fork test (auto-skips when not forked):
 
 - **Math**: `calculateTrade` known-vector, `rt=0` guard, fuzz `out ≤ bs` (1000 runs)
 - **Game state**: fresh user, gardeners accumulating, production capped at 1 day
 - **cast**: creates gardeners, zeros seeds, pays 12% referral, ignores self-referral, reverts when no seeds
 - **sell**: pays MOCHI from treasury, deducts 1% protocol fee, reverts when no seeds
 - **Swap drip**: ETH→MOCHI drips SEEDs to buyer, MOCHI→ETH does not
-- **Dev entry fee**: ETH→MOCHI buys skim exactly 1% to `devTreasury`; MOCHI→ETH does not
+- **Garden curve**: rising-price math, last-mile partial fill + ETH refund, graduation revert
+- **Auto-deepen flywheel**: trigger at 5 ETH inflow, lpReserve consumption, silent skip when reserve depleted
+- **Protocol entry fee**: ETH→MOCHI buys + garden mints skim exactly 1% to the protocol treasury
 - **Dynamic fee**: default is `BASE_FEE`, rises with `marketSeeds`
+- **Invariants** (256 runs × 50 depth each): supply conservation, treasury non-negative, no double-drip, etc.
 
 ---
 
@@ -473,21 +481,21 @@ forge test -vv
 - **Limit-order selling** — scoped in but deferred. Will be a sibling contract that escrows MOCHI and fills via unlock callback when the pool tick crosses a user-set threshold.
 - **Worker NFTs** — gardeners are a `uint256` counter for v1 (cheaper, simpler). NFT skins are a v1.x candidate.
 - **Subgraph / indexer** — front-end reads directly from the hook; fine for v1 but a Graph deployment would back leaderboards & history.
-- **Mainnet deploy** — currently live on Base Sepolia. Mainnet only after a public QA pass against ethskills' `qa/` checklist.
-- **Dark-chibi register** — Mochi Garden v1 is pure cream-kawaii. The sister skill (cute-but-cruel) stays in reserve for v1.x.
+- **Account-abstraction support** — `tx.origin` fallback means smart-contract wallets that don't pass their EOA in `hookData` won't get credited for SEED drips / LP rebate. EOAs through any router are fine. v1.x will resolve this by reading the AA caller from a router-level hookData convention.
 
 ---
 
 ## Resources
 
+- Site: <https://mochigarden.xyz/>
+- X / Twitter: <https://x.com/mochigardenbase>
 - Uniswap v4 core: <https://github.com/Uniswap/v4-core>
 - v4-hooks-public (where `BaseHook` lives): <https://github.com/Uniswap/v4-hooks-public>
-- Frontend skill bundle (local): `/Users/brandonmccall/Desktop/here/{kawaiicore-design,kawaii-motion,dark-chibi}/SKILL.md`
-- Onchain skill index: <https://ethskills.com/SKILL.md>
+- v4 deployments registry: <https://docs.uniswap.org/contracts/v4/deployments>
 
 ---
 
 ## Voice notes
 
-written w/ love, tested on anvil first, best viewed in firefox lol
-(づ｡◕‿‿◕｡)づ tysm for reading
+watered by niwa-chan ★ audited by mochi-chan ★ powered by uniswap v4
+(づ｡◕‿‿◕｡)づ tysm for reading ✿
