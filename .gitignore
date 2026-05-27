@@ -22,3 +22,6 @@ web/.vite/
 .vscode/
 .idea/
 *.swp
+
+# Local-only marketing docs (kept out of this public repo)
+docs/
